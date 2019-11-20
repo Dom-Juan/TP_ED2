@@ -1,0 +1,78 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/CLionProjects/Novo TPED2/grafos.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+stdbool.h
+-
+time.h
+-
+assert.h
+-
+dirent.h
+-
+headers/grafos.h
+C:/CLionProjects/Novo TPED2/headers/grafos.h
+headers/helper.h
+C:/CLionProjects/Novo TPED2/headers/helper.h
+headers/algoritmos_de_busca.h
+C:/CLionProjects/Novo TPED2/headers/algoritmos_de_busca.h
+headers/estruturas.h
+C:/CLionProjects/Novo TPED2/headers/estruturas.h
+headers/mini_controller.h
+C:/CLionProjects/Novo TPED2/headers/mini_controller.h
+
+C:/CLionProjects/Novo TPED2/headers/algoritmos_de_busca.h
+stdio.h
+-
+stdlib.h
+-
+
+C:/CLionProjects/Novo TPED2/headers/estruturas.h
+stdio.h
+-
+stdlib.h
+-
+stdbool.h
+-
+string.h
+-
+
+C:/CLionProjects/Novo TPED2/headers/grafos.h
+estruturas.h
+C:/CLionProjects/Novo TPED2/headers/estruturas.h
+
+C:/CLionProjects/Novo TPED2/headers/helper.h
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+
+C:/CLionProjects/Novo TPED2/headers/mini_controller.h
+stdio.h
+-
+stdlib.h
+-
+assert.h
+-
+time.h
+-
+stdlib.h
+-
+string.h
+-
+dirent.h
+-
+

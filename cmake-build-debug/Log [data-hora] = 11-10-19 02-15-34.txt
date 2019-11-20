@@ -1,0 +1,19 @@
+Execution: 
+     **START LOG**     
+
+-->__Menu__()
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Ler um grafo e criar sua matriz de adjacencia
+       |--> ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node) - Onde o grafo eh lido.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Mostra uma matriz de adjacencia
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - busca por profundidade.
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Criar a tabela - Algoritmo busca por profundidade.
+       |--> realizar_uma_busca_dfs(struct matriz *aux_matriz, struct DFS_data *dfs_tabela) - Criando a tabela.
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Escrever a tabela DFS em um arquivo.
+       |--> criar_arquivo__tabela_dfs(struct DFS_data *dfs_tabela) - Escrevendo a tabela DFS.
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Mostrar a tabela - Algoritmo busca por profundidade.
+       |--> print_tabela_dfs(struct DFS_data* dfs_tabela) - Print da tabela DFS no console.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Ler um grafo e criar sua matriz de adjacencia
+       |--> ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node) - Onde o grafo eh lido.
+
+
+     **END LOG**     

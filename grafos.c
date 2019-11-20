@@ -40,6 +40,84 @@ int endsWithSuffix (const char *s, const char *suffix) { // Compra os sufixo do 
            (strcmp(s + (sLength-suffixLength), suffix) == 0);
 }
 
+// Realiza a leitura de uma matriz serealizada em um arquivo .mt
+void ler_matriz(struct matriz *grafo_matriz_node){
+    strcat(__function_flow__,"       |--> ler_matriz(struct matriz *grafo_matriz_node) - Onde a matriz eh escrita em um arquivo do tipo .mt .\n");
+
+    int i = 0;
+    int j = 0;
+    int count = 0;
+
+    DIR *dir;
+    struct dirent *lsdir;
+    dir = opendir(".");
+
+    printf("Function atual: ler_matriz();\n");
+    printf("      **Arquivos de txt no mesmo diretorio**\n");
+    printf(" >:Encontrados:\n\n");
+    while ( ( lsdir = readdir(dir) ) != NULL ) {
+        if(endsWithSuffix (lsdir->d_name,".mt")){
+            printf ("%s\n", lsdir->d_name);
+        }
+    }
+    printf("\nDigite o  nome do arquivo do tipo matriz de adjacencia a ser aberto: ");
+    scanf("%s", file_name);
+
+    printf("\n");
+
+    if (!endsWithSuffix (file_name,".mt")) {
+        printf("Erro - \"%s\" parece nao ser um arquivo mt valido...\n", file_name);
+        fclose(f1);
+    } else {
+        if((f1 = fopen(file_name,"r+"))!= NULL){
+            fread(grafo_matriz_node, sizeof(struct matriz),1,f1);
+
+            printf("Arquivo lido.\n\n");
+
+            for(i = 0; i < grafo_matriz_node->tamanho; i++) {
+                for(j = 0; j < grafo_matriz_node->tamanho; j++) {
+                    printf("%d ",grafo_matriz_node->m[i][j]);
+                    count++;
+                    if(count == grafo_matriz_node->tamanho){
+                        printf("\n");
+                        count = 0;
+                    }
+                }
+            }
+
+            fclose(f1);
+
+        } else{
+            printf("\n		-> **erro, nao foi possivel abrir o arquivo .mt ...\n\n");
+            fclose(f1);
+        }
+    }
+
+}
+
+// Realiza a escrita da matriz em um arquivo .mt
+void escrever_matriz(struct matriz *grafo_matriz_node){
+    int i = 0;
+
+    strcat(__function_flow__,"       |--> escrever_matriz(struct matriz *grafo_matriz_node) - Onde a matriz eh lida de um arquivo do tipo .mt .\n");
+
+    printf("Function atual: escrever_matriz();\n");
+    printf("\nEscrevendo uma matriz de  em um arquivo...\n");
+    printf("Digite o nome do arquivo!\n>: ");
+    scanf("%s",file_name);
+
+    if((f1 = fopen(file_name,"w+"))!= NULL){
+        fwrite(grafo_matriz_node, sizeof(struct matriz),1,f1);
+
+        printf("Arquivo criado.\n");
+        fclose(f1);
+    } else{
+        printf("\n		-> **erro, nao foi possivel criar o arquivo .mt ...\n\n");
+        fclose(f1);
+    }
+
+}
+
 // Realiza a leitura de um grafo a partir de um arquivo de texto.
 void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node){
     strcat(__function_flow__,"       |--> ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node) - Onde o grafo eh lido.\n");
@@ -66,6 +144,7 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
 
     if (!endsWithSuffix (file_name,".txt")) {
         printf("Erro - \"%s\" parece nao ser um arquivo txt valido...\n", file_name);
+        fclose(f1);
     } else {
         if((f1 = fopen(file_name, "r+")) != NULL){
 
@@ -380,6 +459,7 @@ void ler_busca_dfs(struct DFS_data *dfs_tabela){
 
     if (!endsWithSuffix (file_name,".txt")) {
         printf("Erro - \"%s\" parece nao ser um arquivo txt valido...\n", file_name);
+        fclose(f1);
     } else {
         if((f1 = fopen(file_name, "r+")) != NULL){
             printf("\n		->Lendo o txt...\n\n");
@@ -520,6 +600,10 @@ int grafos(int option,int __local_option__, struct info__matriz *grafo_node,stru
             printf("\n");
         }
         printf("\n");
+    } else if(option == 2 && __local_option__ == 2){
+        ler_matriz(grafo_matriz_node);
+    } else if(option == 2 && __local_option__ == 3) {
+        escrever_matriz(grafo_matriz_node);
     } else if (option == 3 && __local_option__ == 1) { // realizar uma busca de profundidade
 
         do{
@@ -617,7 +701,7 @@ int __Menu__(){
 
     //Declarando as duas estruturas que realizaram e armazenaram os dados com as operacoes relacionadas a grafos.
     struct matriz *grafo_matriz_node = (struct matriz*)malloc(sizeof(struct matriz));               // Alocando memoria para as matrizes de adjacencia e de peso.
-    aux2_matriz = (struct auxiliar_matriz*)malloc(sizeof(struct auxiliar_matriz));                                    // Fazendo uma copia local
+    aux2_matriz = (struct auxiliar_matriz*)malloc(sizeof(struct auxiliar_matriz));                  // Fazendo uma copia local
     struct info__matriz *grafo_node = (struct info__matriz*)malloc(sizeof(struct info__matriz));
     struct DFS_data *dfs_tabela = (struct DFS_data*)malloc(sizeof(struct DFS_data));
     struct BFS_data *bfs_tabela = (struct BFS_data*)malloc(sizeof(struct BFS_data));
@@ -682,6 +766,8 @@ int __Menu__(){
                 printf("Function atual: __Menu__();\n");
                 printf("\n     **Foi escolhdio 2) Operacoes com matrizes de adjacencia.**\n\n");
                 printf("1 -> Mostrar uma matriz de adjacencia.\n");
+                printf("2 -> Ler uma matriz de adjacencia.\n");
+                printf("3 -> Escrever uma matriz de adjacencia.\n");
                 printf("0 -> sair\n\n");
 
                 printf("  **Digite sua escolha\n>: ");
@@ -692,6 +778,18 @@ int __Menu__(){
                     fflush(stdin);
 
                     grafos(op,__local__op, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
+                } else if(__local__op == 2) {
+                    strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Ler uma matriz de adjacencia.\n");
+                    fflush(stdin);
+
+                    grafos(op,__local__op, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
+
+                } else if(__local__op == 3) {
+                    strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Escrever uma matriz de adjacencia.\n");
+                    fflush(stdin);
+
+                    grafos(op,__local__op, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
+
                 }
 
             }while(__local__op != 0);
