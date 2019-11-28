@@ -1,0 +1,3 @@
+C:/CLionProjects/Novo TPED2/cmake-build-debug/CMakeFiles/Novo_TPED2.dir
+C:/CLionProjects/Novo TPED2/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/CLionProjects/Novo TPED2/cmake-build-debug/CMakeFiles/rebuild_cache.dir

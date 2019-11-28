@@ -24,6 +24,10 @@ typedef struct matriz {
     int visitado[30];
     int contem_peso;
     int origem;
+    int numero_vertices;
+    int numero_arestas;
+    int tipo;
+    char classificacao_grafo[50];
 
 }ma;
 
@@ -34,6 +38,10 @@ typedef struct auxiliar_matriz {
     int visitado[30];
     int contem_peso;
     int origem;
+    int numero_vertices;
+    int numero_arestas;
+    int tipo;
+    char classificacao_grafo[50];
 
 }aux_ma;
 
@@ -45,15 +53,22 @@ typedef struct DFS_data{
     char indice_cor[30];
     int descoberta[30];
     int finalizacao[30];
+    int caminho[30];
+
+    int dfs_esta_criada;
 }dfs_struct;
 
 typedef struct BFS_data{
     int origem;
     int tamanho;
-    int indice[30];
+    int tempo;
+    int vertice[30];
+    int pai[30];
     char indice_cor[30];
     int distancia[30];
-    int pai[30];
+    int caminho[30];
+
+    int bfs_esta_criada;
 }bfs_struct;
 
 #endif //NOVO_TPED2_ESTRUTURAS_H
