@@ -26,6 +26,7 @@ char __function_flow__[7500];            // Variavel para marcar o fluxo de exec
 bool debug = true;                       // Variavel para ativar certos printfs no console para verificar tipos de erros, prints,
 bool __grafo_foi_lido__ = false;
 bool __is_dfs_created__ = false;
+bool __is_bfs_created__ = false;
 
 aux_ma *aux2_matriz;
 
@@ -118,6 +119,93 @@ void escrever_matriz(struct matriz *grafo_matriz_node){
 
 }
 
+// Verifica as propriedades do grafo.
+void verificar_props(struct matriz *grafo_matriz_node) {
+    int i = 0;
+    int j = 0;
+
+    float total_n = 0;
+    float total_m = 0;
+
+    float conta_n = 0;
+    float proximidade = 0;
+
+    grafo_matriz_node->numero_vertices = grafo_matriz_node->tamanho;
+    grafo_matriz_node->numero_arestas = 0;
+
+    for(i = 0; i < grafo_matriz_node->tamanho; i++) {
+        for(j = 0; j < grafo_matriz_node->tamanho; j++) {
+            if(grafo_matriz_node->m[i][j] == 1){
+                grafo_matriz_node->numero_arestas = grafo_matriz_node->numero_arestas + 1;
+
+                if(debug == true)
+                    printf("%d\n",grafo_matriz_node->numero_arestas);
+            }
+        }
+    }
+
+    printf("\n");
+
+    if(grafo_matriz_node->tipo == 0){
+        total_m = (float)(grafo_matriz_node->numero_arestas);
+        total_n = (float)(grafo_matriz_node->numero_vertices);
+        conta_n = (total_n * (total_n - 1.0) / 2.0);
+
+        proximidade = total_m - conta_n;
+
+        if(proximidade < 0) {
+            proximidade = proximidade * (-1.0);
+        }
+
+        if(debug == true) {
+            printf("total_m: %f\n",total_m);
+            printf("total_n: %f\n",total_n);
+            printf("conta_n: %f\n",conta_n);
+            printf("proximidade: %f\n",proximidade);
+        }
+
+        if(total_m <= conta_n && (total_m >= proximidade || conta_n >= proximidade)) {
+            strcat(grafo_matriz_node->classificacao_grafo, "Grafo Esparco\n");
+        } else if (total_m <= conta_n && (total_m <= proximidade || conta_n <= proximidade)) {
+            strcat(grafo_matriz_node->classificacao_grafo, "Grafo Denso\n");
+        }
+    } else if(grafo_matriz_node->tipo == 1){
+        total_m = (float)(grafo_matriz_node->numero_arestas);
+        total_n = (float)(grafo_matriz_node->numero_vertices);
+        conta_n = (total_n * (total_n - 1.0));
+
+        proximidade = total_m - conta_n;
+
+        if(proximidade < 0) {
+            proximidade = proximidade * (-1.0);
+        }
+
+        if(debug == true) {
+            printf("total_m: %f\n",total_m);
+            printf("total_n: %f\n",total_n);
+            printf("conta_n: %f\n",conta_n);
+            printf("proximidade: %f\n",proximidade);
+        }
+
+        if(total_m <= conta_n && (total_m >= proximidade || conta_n >= proximidade)) {
+            strcat(grafo_matriz_node->classificacao_grafo, "Grafo Esparco\n");
+        } else if (total_m <= conta_n && (total_m <= proximidade || conta_n <= proximidade)) {
+            strcat(grafo_matriz_node->classificacao_grafo, "Grafo Denso\n");
+        }
+    }
+
+    if(grafo_matriz_node->contem_peso == 1){
+        strcat(grafo_matriz_node->classificacao_grafo, "Grafo Ponderado.\n");
+    } else{
+        strcat(grafo_matriz_node->classificacao_grafo, "Sem rotulo.\n");
+    }
+
+    printf("\n");
+
+    printf("O tipo do grafo eh: %s     **     \n",grafo_matriz_node->classificacao_grafo);
+
+}
+
 // Realiza a leitura de um grafo a partir de um arquivo de texto.
 void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node){
     strcat(__function_flow__,"       |--> ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node) - Onde o grafo eh lido.\n");
@@ -154,6 +242,8 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                 //fscanf(f1, "%*[^\n]\n", NULL);
                 fscanf(f1, "%d", &grafo_node->tipo);
                 fscanf(f1, "%d", &grafo_matriz_node->tamanho);
+
+                grafo_matriz_node->tipo = grafo_node->tipo;
 
                 if(grafo_node->tipo == 1) {
                     printf("\ntipo do grafo: digrafo\n");
@@ -223,6 +313,8 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                 fscanf(f1, "%d", &grafo_node->tipo);
                 fscanf(f1, "%d", &grafo_matriz_node->tamanho);
 
+                grafo_matriz_node->tipo = grafo_node->tipo;
+
                 if(grafo_node->tipo == 1) {
                     printf("\ntipo do grafo: digrafo\n");
 
@@ -280,6 +372,14 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                     fclose(f1);
                 }
 
+            }
+
+            for(i = 0; i < grafo_matriz_node->tamanho; i++) {
+                for(j = 0; j < grafo_matriz_node->tamanho; j++) {
+                    if(grafo_matriz_node->peso[i][j] != 0 && grafo_matriz_node->m[i][j] == 1){
+                        grafo_matriz_node->contem_peso = 1;
+                    }
+                }
             }
 
         } else {
@@ -392,6 +492,211 @@ void criar_grafo(int op){
 
 }
 
+// Cria um arquivo e salva a tabela BFS nele.
+void criar_arquivo__tabela_bfs(struct BFS_data *bfs_tabela){
+    int i = 0;
+
+    strcpy(file_name, "BFS-");
+    char local_file_name[50];
+
+    strcat(__function_flow__,"       |--> criar_arquivo__tabela_dfs(struct BFS_data *dfs_tabela) - Escrevendo a tabela BFS.\n");
+    fflush(stdin);
+
+    printf("Function atual: criar_arquivo__tabela_bfs();\n");
+    fflush(stdin);
+
+    printf("Digite o nome do arquivo!\n>: ");
+    scanf("%s",local_file_name);
+
+    strcat(file_name, local_file_name);
+
+    if(debug == true)
+        printf("\nNome do arquivo: %s\n",file_name);
+
+    printf("\n		->Criando o txt...\n\n");
+
+    if((f2 = fopen(file_name, "w+")) != NULL){
+        printf("\nEscrevendo a tabela...\n");
+
+        fprintf(f2,"%d\n",bfs_tabela->origem);
+        for(i = 0; i < bfs_tabela->tamanho; i++){
+            fprintf(f2,"%d %c %d %d\n", bfs_tabela->vertice[i], bfs_tabela->indice_cor[i], bfs_tabela->distancia[i], bfs_tabela->pai[i]);
+        }
+
+        printf("\nEscrita finalizada!\n");
+
+        fclose(f2);
+
+
+    } else {
+        printf("\n		-> **erro, nao foi possivel criar o arquivo de txt...\n\n");
+        fclose(f2);
+    }
+}
+
+// Realiza uma leitura em um arquivo com uma tabela BFS.
+void ler_busca_bfs(struct BFS_data *bfs_tabela){
+    strcat(__function_flow__,"       |--> ler_busca_bfs(struct matriz *aux_matriz, struct BFS_data *bfs_tabela) - Lendo um arquivo com busca BFS.\n");
+    fflush(stdin);
+    int i =0;
+
+    DIR *dir;
+    struct dirent *lsdir;
+    dir = opendir(".");
+    printf("Function atual: ler_busca_bfs();\n");
+    printf("      **Arquivos de txt no mesmo diretorio**\n");
+    printf(" >:Encontrados:\n\n");
+    while ( ( lsdir = readdir(dir) ) != NULL ) {
+        if(endsWithSuffix (lsdir->d_name,".txt")){
+            printf ("%s\n", lsdir->d_name);
+        }
+    }
+    printf("\nDigite o  nome do arquivo de texto a ser aberto: ");
+    scanf("%s", file_name);
+    fflush(stdin);
+
+    printf("\n");
+
+    if (!endsWithSuffix (file_name,".txt")) {
+        printf("Erro - \"%s\" parece nao ser um arquivo txt valido...\n", file_name);
+        fclose(f1);
+    } else {
+        if((f1 = fopen(file_name, "r+")) != NULL){
+            printf("\n		->Lendo o txt...\n\n");
+
+            int __tamanho_tabela__ = 0;
+            int vertice[30];
+            int pai[30];
+            int distancia[30];
+            char indice_cor[30];
+
+
+            fscanf(f1, "%d", &bfs_tabela->origem);
+
+            while(!feof(f1)){
+                fscanf(f1, "%d %c %d %d",&vertice[__tamanho_tabela__]
+                        ,&indice_cor[__tamanho_tabela__]
+                        ,&distancia[__tamanho_tabela__]
+                        ,&pai[__tamanho_tabela__]);
+
+                __tamanho_tabela__++;
+            }
+
+            for(i = 0; i < __tamanho_tabela__-1; i++){
+                bfs_tabela->vertice[i] = vertice[i];
+                bfs_tabela->indice_cor[i] = indice_cor[i];
+                bfs_tabela->distancia[i] = distancia[i];
+                bfs_tabela->pai[i] = pai[i];
+
+                printf("Vertice: %d\n", bfs_tabela->vertice[i]);
+                printf("Cor: %c\n",bfs_tabela->indice_cor[i]);
+                printf("Distancia: %d\n",bfs_tabela->distancia[i]);
+                printf("Pai: %d\n\n",bfs_tabela->pai[i]);
+            }
+
+            bfs_tabela->tamanho = __tamanho_tabela__-1;
+
+            fclose(f1);
+
+            int t = 0;
+
+            printf("Function atual: print_tabela_dfs();\n");
+            printf("           *Busca em Largura - Tabela*         \n");
+            printf("Caso queira ver a tabela no cmd em janela cheia, siga as intrucoes abaido:\n\n");
+            printf("--> Pressione ENTER depois de maximizar a tela de prompt\npara que a formatacao nao seja estragada.\n");
+            printf("\n* Aperte ENTER para continuar *\n");
+            getchar();
+            printf("Origem: %d\n",bfs_tabela->origem);
+            printf("Obs: -1 == NULL\n\n");
+            printf("*******************************************************\n");
+            printf("*  Vertices  || Cor ||   Distancia  ||       Pai      *\n");
+            printf("*******************************************************\n");
+            printf("*    %.3d     ||  %c  ||     %.3d      ||     %.3d       *\n", bfs_tabela->vertice[0], bfs_tabela->indice_cor[0], bfs_tabela->distancia[0], bfs_tabela->pai[0]);
+            for (t = 1; t < bfs_tabela->tamanho; t++)
+            {
+
+                printf("*    %.3d     ||  %c  ||     %.3d      ||      %.3d       *\n", bfs_tabela->vertice[t], bfs_tabela->indice_cor[t], bfs_tabela->distancia[t], bfs_tabela->pai[t]);
+            }
+
+            printf("*******************************************************\n");
+
+            __is_bfs_created__ = true;
+
+        } else {
+            printf("\n		-> **erro, nao foi possivel abrir o arquivo de txt...\n\n");
+            fclose(f1);
+        }
+    }
+}
+
+// Acessa a function bfs() para realizar uma busca em largura.
+void realizar_uma_busca_bfs(struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela){
+    int i = 0;
+
+    strcat(__function_flow__,"       |--> realizar_uma_busca_dfs(struct matriz *aux_matriz, struct DFS_data *dfs_tabela) - Criando a tabela.\n");
+    fflush(stdin);
+
+    bfs_tabela->tamanho = aux2_matriz->tamanho;
+
+
+    printf("Function atual: realizar_uma_busca_bfs();\n");
+    fflush(stdin);
+
+    if(debug == true){
+        printf("\n\nTabela:\n");
+        for(i = 0; i < bfs_tabela->tamanho; i++){
+            bfs_tabela->vertice[i] = i;
+        }
+    }
+
+    BF_Traversal(aux2_matriz, bfs_tabela);
+
+    printf(" Busca realizada com sucesso!\n");
+
+    __is_bfs_created__ = true;
+}
+
+// Printa a tabela BFS no Console
+void print_tabela_bfs(struct BFS_data *bfs_tabela) {
+    strcat(__function_flow__,"       |--> print_tabela_bfs(struct BFS_data* bfs_tabela) - Print da tabela BFS no console.\n");
+    fflush(stdin);
+
+    int i = 0;
+    int t = 0;
+
+    printf("Function atual: print_tabela_dfs();\n");
+    printf("           *Busca em Largura - Tabela*         \n");
+    printf("Caso queira ver a tabela no cmd em janela cheia, siga as intrucoes abaido:\n\n");
+    printf("--> Pressione ENTER depois de maximizar a tela de prompt\npara que a formatacao nao seja estragada.\n");
+    printf("\n* Aperte ENTER para continuar *\n");
+    getchar();
+    printf("Origem: %d\n",bfs_tabela->origem);
+    printf("Obs: -1 == NULL\n\n");
+    printf("*******************************************************\n");
+    printf("*  Vertices  || Cor ||   Distancia  ||       Pai      *\n");
+    printf("*******************************************************\n");
+    printf("*    %.3d     ||  %c  ||     %.3d      ||     %.3d       *\n", bfs_tabela->vertice[0], bfs_tabela->indice_cor[0], bfs_tabela->distancia[0], bfs_tabela->pai[0]);
+    for (t = 1; t < bfs_tabela->tamanho; t++)
+    {
+
+        printf("*    %.3d     ||  %c  ||     %.3d      ||      %.3d       *\n", bfs_tabela->vertice[t], bfs_tabela->indice_cor[t], bfs_tabela->distancia[t], bfs_tabela->pai[t]);
+    }
+
+    printf("*******************************************************\n");
+
+    if(debug == true){
+        for(i = 0; i < bfs_tabela->tamanho; i++) {
+            printf("Vertice: %d\n", bfs_tabela->vertice[i]);
+            printf("Cor: %c\n",bfs_tabela->indice_cor[i]);
+            printf("Distancia: %d\n",bfs_tabela->distancia[i]);
+            printf("Pai: %d\n\n",bfs_tabela->pai[i]);
+        }
+    }
+}
+// FIM DOS ALGORITMOS BFS
+
+
+// INCIO ALGORITMOS DFS
 // Cria um arquivo e salva a tabela DFS nele.
 void criar_arquivo__tabela_dfs(struct DFS_data *dfs_tabela){
     int i = 0;
@@ -482,6 +787,25 @@ void ler_busca_dfs(struct DFS_data *dfs_tabela){
                 __tamanho_tabela__++;
             }
 
+            int t = 0;
+            printf("Origem: %d\n\n",dfs_tabela->origem);
+            printf("           *Busca em Profundidade - Tabela*         \n");
+            printf("Caso queira ver a tabela no cmd em janela cheia, siga as intrucoes abaido:\n\n");
+            printf("--> Pressione ENTER depois de maximizar a tela de prompt\npara que a formatacao nao seja estragada.\n");
+            printf("\n* Aperte ENTER para continuar *\n");
+            getchar();
+            printf("*******************************************************\n");
+            printf("*  Vertices  || Cor ||  Descoberta  ||  Finalizacao   *\n");
+            printf("*******************************************************\n");
+
+            for (t = 0; t < __tamanho_tabela__ - 1; t++)
+            {
+
+                printf("*    %.3d     ||  %c  ||     %.3d      ||     %.3d       *\n", indice[t], indice_cor[t], descoberta[t], finalizacao[t]);
+            }
+
+            printf("*******************************************************\n");
+
             for(i = 0; i < __tamanho_tabela__-1; i++){
 
                 dfs_tabela->indice[i] = indice[i];
@@ -517,6 +841,10 @@ void realizar_uma_busca_dfs(struct auxiliar_matriz *aux2_matriz, struct DFS_data
     printf("Function atual: realizar_uma_busca_dfs();\n");
     fflush(stdin);
 
+    for( i = 0; i < dfs_tabela->tamanho; i++){
+        dfs_tabela->indice[i] = i;
+    }
+
     printf("Digite a origem para fazer a busca por profundidade: ");
     scanf("%d", &dfs_tabela->origem);
     printf("\n\n A origem escolhida foi %d!\n\n",dfs_tabela->origem);
@@ -538,15 +866,33 @@ void realizar_uma_busca_dfs(struct auxiliar_matriz *aux2_matriz, struct DFS_data
 }
 
 // Print na tela de uma tabela DFS.
-void print_tabela_dfs(struct DFS_data* dfs_tabela){
+void print_tabela_dfs(struct DFS_data *dfs_tabela){
 
     strcat(__function_flow__,"       |--> print_tabela_dfs(struct DFS_data* dfs_tabela) - Print da tabela DFS no console.\n");
     fflush(stdin);
 
     int i = 0;
+    int t = 0;
 
     printf("Function atual: print_tabela_dfs();\n");
-    printf("\n\nTabela:\n\n");
+    printf("           *Busca em Profundidade - Tabela*         \n");
+    printf("Caso queira ver a tabela no cmd em janela cheia, siga as intrucoes abaido:\n\n");
+    printf("--> Pressione ENTER depois de maximizar a tela de prompt\npara que a formatacao nao seja estragada.\n");
+    printf("\n* Aperte ENTER para continuar *\n");
+    getchar();
+    printf("Origem: %d\n\n",dfs_tabela->origem);
+    printf("******************************************************\n");
+    printf("*  Vertices  || Cor ||  Descoberta  ||  Finalizacao  *\n");
+    printf("******************************************************\n");
+
+    for (t = 0; t < dfs_tabela->tamanho; t++)
+    {
+
+        printf("*    %.3d     ||  %c  ||     %.3d      ||     %.3d       *\n", dfs_tabela->indice[t], dfs_tabela->indice_cor[t], dfs_tabela->descoberta[t], dfs_tabela->finalizacao[t]);
+    }
+
+    printf("******************************************************\n");
+
     for(i = 0; i < dfs_tabela->tamanho; i++){
         printf("Indice: %d\n",i);
         printf("descoberta: %d\n",dfs_tabela->descoberta[i]);
@@ -554,6 +900,8 @@ void print_tabela_dfs(struct DFS_data* dfs_tabela){
         printf("cor: %c\n\n",dfs_tabela->indice_cor[i]);
     }
 }
+
+// FIM ALGORITMOS DFS
 
 // Function resposavel por realizar operacoes ou chamar outras functions para realizar operacoes pedidas no trabalho.
 int grafos(int option,int __local_option__, struct info__matriz *grafo_node,struct matriz *grafo_matriz_node, struct DFS_data *dfs_tabela, struct BFS_data *bfs_tabela){
@@ -670,11 +1018,116 @@ int grafos(int option,int __local_option__, struct info__matriz *grafo_node,stru
     } else if (option == 3 && __local_option__ == 2) { // realizar uma busca em largura
 
         do{
+            printf("Function atual: grafos();\n");
+            printf("\n     **Foi escolhdio 3-2) Busca por largura.**\n\n");
+            printf("1 -> Ler uma tabela de um arquivo de texto.\n");
+            printf("2 -> Escrever uma tabela em um arquivo de texto.\n");
+            printf("3 -> Criar a tabela - Algoritmo busca por largura.\n");
+            printf("4 -> Mostrar a tabela.\n\n");
+            printf("0 -> sair\n\n");
+
+            printf("  **Digite sua escolha\n>: ");
+            scanf("%d",&__local_while_op__);
+
+            if(__local_while_op__ == 1){ // Lendo uma tabela de um arquivo de texto
+
+                strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Ler uma tabela BFS em um arquivo.\n");
+                fflush(stdin);
+
+                ler_busca_bfs(bfs_tabela);
+
+            } else if(__local_while_op__ == 2) { // Escrevendo uma tabela em um arquivo de texto.
+                strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Escrever a tabela BFS em um arquivo.\n");
+                fflush(stdin);
+
+                criar_arquivo__tabela_bfs(bfs_tabela);
+
+            } else if(__local_while_op__ == 3) { // Opcao aonde ocorre a criacao da tabela
+                strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Criar a tabela - Algoritmo busca por largura.\n");
+                fflush(stdin);
+
+                aux2_matriz->tamanho = grafo_matriz_node->tamanho;
+
+                for(i = 0; i < grafo_matriz_node->tamanho; i++) {
+                    for (j = 0; j < grafo_matriz_node->tamanho; j++) {
+
+                        aux2_matriz->m[i][j] = grafo_matriz_node->m[i][j];
+                        aux2_matriz->peso[i][j] = grafo_matriz_node->peso[i][j];
+
+                        if(debug){
+                            printf("L:%d C:%d V:%d\n",i,j,aux2_matriz->m[i][j]);
+                        }
+                    }
+                    aux2_matriz->visitado[i] = grafo_matriz_node->visitado[i];
+                }
+
+                realizar_uma_busca_bfs(aux2_matriz, bfs_tabela);
+
+            } else if(__local_while_op__ == 4) {
+                strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Mostrar a tabela - Algoritmo busca por largura.\n");
+                fflush(stdin);
+
+                if(__is_bfs_created__ == true) {
+                    print_tabela_bfs(bfs_tabela);
+                    __is_bfs_created__ = false;
+                } else {
+                    printf("\nE necessario ler uma tabela de um arquivo txt ou criar uma tabela a partir de uma\n matriz de adjacencia para dar print nela.\n\n");
+                }
+
+            }
 
         }while(__local_while_op__ != 0);
 
         printf("\nAlgorimto n implementado\n");
 
+    } else if (option == 4 && __local_option__ == 1) { // Realizar um caminho simples.
+        strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Realizar um caminho simples..\n");
+        fflush(stdin);
+
+        printf("\nAlgorimto n implementado\n");
+
+    } else if (option == 4 && __local_option__ == 2) { // Realizar um ciclo simples.
+        strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Realizar um ciclo simples.\n");
+        fflush(stdin);
+
+        printf("\nAlgorimto n implementado\n");
+
+    } else if (option == 4 && __local_option__ == 3) { // Caminho da busca em profundidade
+        strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Caminho da busca em profundidade.\n");
+        fflush(stdin);
+
+        printf("\n\nCaminho realizado na DFS:\n");
+        for(i = 0; i< dfs_tabela->tamanho; i++){
+            if(i+1 == dfs_tabela->tamanho) {
+                printf("%d",dfs_tabela->caminho[i]);
+            } else {
+                printf("%d->",dfs_tabela->caminho[i]);
+            }
+        }
+
+        printf("\n\n");
+
+
+    } else if (option == 4 && __local_option__ == 4) { // Caminho da busca em largura
+        strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Caminho da busca em largura.\n");
+        fflush(stdin);
+
+        printf("\n\nCaminho realizado:\n");
+        for(i = 0; i < bfs_tabela->tamanho; i++) {
+            if(i+1 == bfs_tabela->tamanho){
+                printf("%d", bfs_tabela->caminho[i]);
+            } else {
+                printf("%d->", bfs_tabela->caminho[i]);
+            }
+        }
+
+        printf("\n\n");
+
+    } else if( option == 5 && __local_option__ == 1) {
+        strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Propriedades.\n");
+        fflush(stdin);
+
+        verificar_props(grafo_matriz_node);
     }
 
     //pause();
@@ -816,6 +1269,7 @@ int __Menu__(){
                     strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Algoritmo busca por largura\n");
                     fflush(stdin);
 
+                    grafos(op,__local__op, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
                 }
 
             }while(__local__op != 0);
@@ -825,7 +1279,9 @@ int __Menu__(){
                 printf("Function atual: __Menu__();\n");
                 printf("\n     **Foi escolhdio 4) Exibir o caminho.**\n\n");
                 printf("1 -> Caminho simples.\n");
-                printf("2 -> Ciclo simples.\n\n");
+                printf("2 -> Ciclo simples.\n");
+                printf("3 -> Caminho gerado pela DFS.\n");
+                printf("4 -> Caminho gerado pela BFS.\n");
                 printf("0 -> sair\n\n");
 
                 printf("  **Digite sua escolha\n>: ");
@@ -839,34 +1295,37 @@ int __Menu__(){
                     strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Ciclo simples\n");
                     fflush(stdin);
 
+                } else if(__local__op == 3) {
+                    strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Caminho gerado pela DFS\n");
+                    fflush(stdin);
+
+                    grafos(op,__local__op, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
+
+                } else if(__local__op == 4) {
+                    strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Caminho gerado pela BFS\n");
+                    fflush(stdin);
+
+                    grafos(op,__local__op, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
+
+                } else if(__local__op == 5) {
+                    strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Ciclo simples\n");
+                    fflush(stdin);
+
+                    //grafos(op,__local__op, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
+
                 }
 
             }while(__local__op != 0);
         } else if (op == 5) {
-            do{
                 printf("Function atual: __Menu__();\n");
                 printf("\n     **Foi escolhdio 5) Verificacao de propriedades.**\n\n");
 
-                printf("1 -> \n");
-                printf("2 -> \n\n");
-                printf("0 -> sair\n\n");
+                strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) Verificacao de propriedades.\n");
+                fflush(stdin);
 
-                printf("  **Digite sua escolha\n>: ");
-                scanf("%d",&__local__op);
-
-                if(__local__op == 1){
-                    strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) op = 5, __local__op = 1\n");
-                    fflush(stdin);
+                grafos(op,1, grafo_node, grafo_matriz_node, dfs_tabela, bfs_tabela);
 
 
-                } else if(__local__op == 2) {
-                    strcat(__function_flow__,"  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) op = 5, __local__op = 2\n");
-                    fflush(stdin);
-
-
-                }
-
-            }while(__local__op != 0);
         } else if (op == 6) {
             do{
                 printf("Function atual: __Menu__();\n");

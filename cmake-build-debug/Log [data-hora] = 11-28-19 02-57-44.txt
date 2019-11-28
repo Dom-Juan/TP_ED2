@@ -1,0 +1,21 @@
+Execution: 
+     **START LOG**     
+
+-->__Menu__()
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - busca por profundidade.
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Ler uma tabela DFS em um arquivo.
+       |--> ler_busca_dfs(struct matriz *aux_matriz, struct DFS_data *dfs_tabela) - Lendo um arquivo com busca DFS.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Algoritmo busca por largura
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Ler uma tabela BFS em um arquivo.
+       |--> ler_busca_bfs(struct matriz *aux_matriz, struct BFS_data *bfs_tabela) - Lendo um arquivo com busca BFS.
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Mostrar a tabela - Algoritmo busca por largura.
+       |--> print_tabela_bfs(struct BFS_data* bfs_tabela) - Print da tabela BFS no console.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Caminho gerado pela DFS
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Caminho da busca em profundidade.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Caminho gerado pela BFS
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Caminho da busca em largura.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Caminho gerado pela BFS
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Caminho da busca em largura.
+
+
+     **END LOG**     

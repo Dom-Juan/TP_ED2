@@ -1,0 +1,9 @@
+Execution: 
+     **START LOG**     
+
+-->__Menu__()
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Algoritmo busca por largura
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - busca por profundidade.
+
+
+     **END LOG**     

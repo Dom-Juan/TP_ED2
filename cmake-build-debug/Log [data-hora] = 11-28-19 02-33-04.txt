@@ -1,0 +1,15 @@
+Execution: 
+     **START LOG**     
+
+-->__Menu__()
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Ler um grafo e criar sua matriz de adjacencia
+       |--> ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node) - Onde o grafo eh lido.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Algoritmo busca por largura
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Criar a tabela - Algoritmo busca por largura.
+       |--> realizar_uma_busca_dfs(struct matriz *aux_matriz, struct DFS_data *dfs_tabela) - Criando a tabela.
+       |--> print_tabela_bfs(struct BFS_data* bfs_tabela) - Print da tabela BFS no console.
+  |--> grafos(op,__local__op, grafo_node, grafo_matriz_node) - Caminho gerado pela BFS
+    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Caminho da busca em largura.
+
+
+     **END LOG**     
