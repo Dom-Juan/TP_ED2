@@ -18,6 +18,7 @@ typedef struct info__matriz{
 }tm;
 
 typedef struct matriz {
+    int indice[30];
     int m[30][30];
     int peso[30][30];
     int tamanho;
@@ -32,6 +33,7 @@ typedef struct matriz {
 }ma;
 
 typedef struct auxiliar_matriz {
+    int indice[30];
     int m[30][30];
     int peso[30][30];
     int tamanho;
@@ -70,5 +72,7 @@ typedef struct BFS_data{
 
     int bfs_esta_criada;
 }bfs_struct;
+
+int dfs_caminho[30];
 
 #endif //NOVO_TPED2_ESTRUTURAS_H

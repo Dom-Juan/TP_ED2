@@ -10,10 +10,30 @@
 #include <string.h>
 
 void pause(){
-    printf("Aperte qualquer tecla para continuar. . .");
-    getchar();
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+    system("read -p 'Press Enter to continue...' var");
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+    system("pause");
+#endif
+
+
+}
+
+/*void clrscr() {
+    system("@cls||clear");
     fflush(stdin);
-    printf("\n");
+}*/
+
+void clrscr(){
+#if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
+    system("clear");
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+    system("cls");
+#endif
 }
 
 #endif //NOVO_TPED2_HELPER_H

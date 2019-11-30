@@ -7,8 +7,13 @@
 
 #define MAX 100
 
+// Variaveis globais em algoritmos_de_busca.c
+int contador_caminho = 0;
+int fila[MAX];
+int proximo = -1,anterior = -1;
+
 // INICIO DO ALGORITMO DFS
-void visit_dfs(struct auxiliar_matriz *aux2_matriz, int origem, dfs_struct *dfs_tabela, bool debug, int contador_caminho){
+void visit_dfs(struct auxiliar_matriz *aux2_matriz, int origem, dfs_struct *dfs_tabela, bool debug){
     dfs_tabela->indice_cor[origem] = 'c';
     dfs_tabela->tempo = dfs_tabela->tempo + 1;
     dfs_tabela->descoberta[origem] = dfs_tabela->tempo;
@@ -21,7 +26,10 @@ void visit_dfs(struct auxiliar_matriz *aux2_matriz, int origem, dfs_struct *dfs_
         printf("Cor; %c\n",dfs_tabela->indice_cor[origem]);
     }
 
+
+    dfs_caminho[contador_caminho] = origem;
     dfs_tabela->caminho[contador_caminho] = origem;
+
 
     int v = 0;
     for(v = 0; v < aux2_matriz->tamanho; v++){
@@ -30,7 +38,8 @@ void visit_dfs(struct auxiliar_matriz *aux2_matriz, int origem, dfs_struct *dfs_
             if(debug == true)
                 printf("-> origem:%d v:%d cor:%c\n",origem,v,dfs_tabela->indice_cor[v]);
 
-            visit_dfs(aux2_matriz, v, dfs_tabela, debug, contador_caminho+1);
+            contador_caminho++;
+            visit_dfs(aux2_matriz, v, dfs_tabela, debug);
         }
     }
 
@@ -50,7 +59,7 @@ void visit_dfs(struct auxiliar_matriz *aux2_matriz, int origem, dfs_struct *dfs_
 void dfs(struct auxiliar_matriz *aux2_matriz,int origem, dfs_struct *dfs_tabela, bool debug){
     int i = 0;
     int j = 0;
-    int contador_caminho = 0;
+
 
     dfs_tabela->tempo = 0;
     printf("Function atual: dfs(ma *aux_matriz);\n");
@@ -59,18 +68,35 @@ void dfs(struct auxiliar_matriz *aux2_matriz,int origem, dfs_struct *dfs_tabela,
         dfs_tabela->indice_cor[i] = 'b';
     }
 
-    for( j = 0; j < dfs_tabela->tamanho; j++){
+    for(j = 0; j < dfs_tabela->tamanho; j++){
         if(dfs_tabela->indice_cor[j] == 'b'){
-            visit_dfs(aux2_matriz, origem, dfs_tabela, debug, contador_caminho);
+            visit_dfs(aux2_matriz, origem, dfs_tabela, debug);
         }
+    }
+
+
+    if(debug == true) {
+        printf("\n Caminho da busca por profundidade na function");
+        for (j = 0; j< dfs_tabela->tamanho; j++){
+
+            printf("%d->",dfs_caminho[j]);
+
+        }
+
+        printf("\n");
+
+        printf("\n Caminho da busca por profundidade na tabela");
+        for (j = 0; j< dfs_tabela->tamanho; j++){
+
+            printf("%d->",dfs_tabela->caminho[j]);
+        }
+
+        printf("\n");
     }
 }
 // FIM DO ALGORITMO DFS
 
 // INICIO DO ALGORITMO BFS
-int fila[MAX];
-int proximo = -1,anterior = -1;
-
 void inserir_fila(int vertex) {
     if(anterior == MAX-1)
         printf("Underflow na fila!!!!!\n");
@@ -100,7 +126,7 @@ int deletar_fila() {
     return deletar_item;
 }
 
-void BFS(int v, struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela) {
+void BFS(int v, struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela, bool debug) {
     int i;
     int contador = 0;
     int distancia = 0;
@@ -113,7 +139,7 @@ void BFS(int v, struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela
 
     while(!fila_esta_vazia()) {
         v = deletar_fila();
-        printf("%d ",v);
+        //printf("%d ",v);
 
         bfs_tabela->indice_cor[v] = 'p';
         //state[v] = 'p';
@@ -136,18 +162,20 @@ void BFS(int v, struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela
     }
     printf("\n");
 
-
-    printf("Origem: %d\n\n",bfs_tabela->origem);
-    for(i = 0; i < bfs_tabela->tamanho; i++) {
-        printf("Vertice: %d\n", bfs_tabela->vertice[i]);
-        printf("Cor: %c\n",bfs_tabela->indice_cor[i]);
-        printf("Distancia: %d\n",bfs_tabela->distancia[i]);
-        printf("Pai: %d\n\n",bfs_tabela->pai[i]);
+    if(debug == true){
+        printf("Em BFS()\n");
+        printf("Origem: %d\n\n",bfs_tabela->origem);
+        for(i = 0; i < bfs_tabela->tamanho; i++) {
+            printf("Vertice: %d\n", bfs_tabela->vertice[i]);
+            printf("Cor: %c\n",bfs_tabela->indice_cor[i]);
+            printf("Distancia: %d\n",bfs_tabela->distancia[i]);
+            printf("Pai: %d\n\n",bfs_tabela->pai[i]);
+        }
     }
 
 }
 
-void BF_Traversal(struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela) {
+void BF_Traversal(struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela, bool debug) {
     int i;
 
     for(i = 0; i < aux2_matriz->tamanho; i++)
@@ -157,7 +185,7 @@ void BF_Traversal(struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabe
     scanf("%d", &bfs_tabela->origem);
     printf("\n\n A origem escolhida foi %d!\n\n",bfs_tabela->origem);
 
-    BFS(bfs_tabela->origem, aux2_matriz, bfs_tabela);
+    BFS(bfs_tabela->origem, aux2_matriz, bfs_tabela, debug);
 
 
 }
