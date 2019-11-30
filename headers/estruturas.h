@@ -71,4 +71,6 @@ typedef struct BFS_data{
     int bfs_esta_criada;
 }bfs_struct;
 
+int dfs_caminho[30];
+
 #endif //NOVO_TPED2_ESTRUTURAS_H

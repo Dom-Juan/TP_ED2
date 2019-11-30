@@ -1,15 +1,15 @@
 # depslib dependency file v1.0
-1573360646 source:c:\clionprojects\novo tped2\algoritmos_de_busca.c
+1575073185 source:c:\clionprojects\novo tped2\algoritmos_de_busca.c
 	"headers/estruturas.h"
 	"headers/algoritmos_de_busca.h"
 
-1574643235 c:\clionprojects\novo tped2\headers\estruturas.h
+1575073185 c:\clionprojects\novo tped2\headers\estruturas.h
 	<stdio.h>
 	<stdlib.h>
 	<stdbool.h>
 	<string.h>
 
-1573360646 c:\clionprojects\novo tped2\headers\algoritmos_de_busca.h
+1574963742 c:\clionprojects\novo tped2\headers\algoritmos_de_busca.h
 	<stdio.h>
 	<stdlib.h>
 
@@ -27,7 +27,7 @@
 	"headers/estruturas.h"
 	"headers/mini_controller.h"
 
-1573348871 c:\clionprojects\novo tped2\headers\grafos.h
+1575069378 c:\clionprojects\novo tped2\headers\grafos.h
 	"estruturas.h"
 
 1573349918 c:\clionprojects\novo tped2\headers\helper.h
@@ -44,7 +44,7 @@
 	<string.h>
 	<dirent.h>
 
-1573348314 source:c:\clionprojects\novo tped2\main.c
+1575069691 source:c:\clionprojects\novo tped2\main.c
 	<stdio.h>
 	<stdlib.h>
 	"headers/grafos.h"
