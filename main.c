@@ -10,6 +10,7 @@ int main() {
     printf("Desenvolvido por:\n");
     printf(" Juan Cardoso da Silva.\n");
     printf(" Pedro Takahashi\n");
+    printf(" Version 1.1\n\n");
 #if defined(__linux__) || defined(__unix__) || defined(__APPLE__)
     system("read -p 'Press Enter to continue...' var");
 #endif
