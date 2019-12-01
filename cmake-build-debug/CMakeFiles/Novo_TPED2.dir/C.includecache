@@ -6,6 +6,12 @@
 
 #IncludeRegexTransform: 
 
+C:/CLionProjects/Novo TPED2/algoritmos_de_busca.c
+headers/estruturas.h
+C:/CLionProjects/Novo TPED2/headers/estruturas.h
+headers/algoritmos_de_busca.h
+C:/CLionProjects/Novo TPED2/headers/algoritmos_de_busca.h
+
 C:/CLionProjects/Novo TPED2/grafos.c
 stdio.h
 -
@@ -75,4 +81,16 @@ string.h
 -
 dirent.h
 -
+
+C:/CLionProjects/Novo TPED2/main.c
+stdio.h
+-
+stdlib.h
+-
+headers/grafos.h
+C:/CLionProjects/Novo TPED2/headers/grafos.h
+
+C:/CLionProjects/Novo TPED2/mini_controller.c
+headers/mini_controller.h
+C:/CLionProjects/Novo TPED2/headers/mini_controller.h
 

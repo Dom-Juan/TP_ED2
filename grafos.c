@@ -24,9 +24,9 @@ FILE *f1, *f2;                           // Variaveis para criacao de arquivos, 
 char file_name[50];                      // Variavel utilizada para dar nome ao arquivo de texto criado.
 char __function_flow__[7500];            // Variavel para marcar o fluxo de execucao das funcoes no codigo.
 bool debug = false;                       // Variavel para ativar certos printfs no console para verificar tipos de erros, prints,
-bool __grafo_foi_lido__ = false;
-bool __is_dfs_created__ = false;
-bool __is_bfs_created__ = false;
+bool __grafo_foi_lido__ = false;         // Variavel que verifica se um grafo foi lido previamente
+bool __is_dfs_created__ = false;         // Variavel que verifica se uma tabela DFS foi lida
+bool __is_bfs_created__ = false;         // Variavel que verifica se uma tabela BFS foi lida
 
 aux_ma *aux2_matriz;
 
@@ -56,7 +56,7 @@ void ler_matriz(struct matriz *grafo_matriz_node){
     printf("Function atual: ler_matriz();\n");
     printf("      **Arquivos de txt no mesmo diretorio**\n");
     printf(" >:Encontrados:\n\n");
-    while ( ( lsdir = readdir(dir) ) != NULL ) {
+    while ( ( lsdir = readdir(dir) ) != NULL ) {    // Só mostra o nome dos arquivos do mesmo sufixo escrito
         if(endsWithSuffix (lsdir->d_name,".mt")){
             printf ("%s\n", lsdir->d_name);
         }
@@ -66,7 +66,7 @@ void ler_matriz(struct matriz *grafo_matriz_node){
 
     printf("\n");
 
-    if (!endsWithSuffix (file_name,".mt")) {
+    if (!endsWithSuffix (file_name,".mt")) { // Se o sufixo for diferente de .mt , não abre o arquivo
         printf("Erro - \"%s\" parece nao ser um arquivo mt valido...\n", file_name);
         fclose(f1);
         pause();
@@ -235,8 +235,8 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
     printf("Function atual: ler_grafo();\n");
     printf("      **Arquivos de txt no mesmo diretorio**\n");
     printf(" >:Encontrados:\n\n");
-    while ( ( lsdir = readdir(dir) ) != NULL ) {
-        if(endsWithSuffix (lsdir->d_name,".txt")){
+    while ( ( lsdir = readdir(dir) ) != NULL ) { 
+        if(endsWithSuffix (lsdir->d_name,".txt")){ // Só mostra o nome dos arquivos do mesmo sufixo escrito
             printf ("%s\n", lsdir->d_name);
         }
     }
@@ -260,12 +260,12 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                 fscanf(f1, "%d", &grafo_matriz_node->tamanho);
 
                 grafo_matriz_node->tipo = grafo_node->tipo;
-
+                // tipo 1 == digrafo
                 if(grafo_node->tipo == 1) {
                     printf("\ntipo do grafo: digrafo\n");
 
                     printf("tamanho: %d\n", grafo_matriz_node->tamanho);
-
+                    // inicializando a estrutura da matriz de adjacencia
                     for(i = 0; i < grafo_matriz_node->tamanho; i++) {
                         for (j = 0; j < grafo_matriz_node->tamanho; j++) {
 
@@ -280,7 +280,7 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                         }
                         grafo_matriz_node->indice[i] = i;
                     }
-
+                    // Lendo do arquivo de texto a matriz de adjacencia.
                     while((fscanf(f1,"%d %d %d",&grafo_node->grafo_saida, &grafo_node->grafo_chegada, &grafo_node->peso)) != EOF){
                         grafo_matriz_node->m[grafo_node->grafo_saida][grafo_node->grafo_chegada] = 1;
                         grafo_matriz_node->peso[grafo_node->grafo_saida][grafo_node->grafo_chegada] = grafo_node->peso;
@@ -293,7 +293,7 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                     printf("\ntipo do grafo: grafo\n");
 
                     printf("tamanho: %d\n", grafo_matriz_node->tamanho);
-
+                    // inicializando a estrutura da matriz de adjacencia.
                     for(i = 0; i < grafo_matriz_node->tamanho; i++) {
                         for (j = 0; j < grafo_matriz_node->tamanho; j++) {
 
@@ -309,7 +309,7 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                     }
 
                     printf("\n		->Lendo o txt...\n\n");
-
+                    // Lendo de um arqvui de texto a matriz de adjacencia
                     while((fscanf(f1,"%d %d %d",&grafo_node->grafo_saida, &grafo_node->grafo_chegada, &grafo_node->peso)) != EOF){
                         grafo_matriz_node->m[grafo_node->grafo_saida][grafo_node->grafo_chegada] = 1;
                         grafo_matriz_node->m[grafo_node->grafo_chegada][grafo_node->grafo_saida] = 1;
@@ -321,7 +321,7 @@ void ler_grafo(struct info__matriz *grafo_node,struct matriz *grafo_matriz_node)
                 }
                 __grafo_foi_lido__ = true;
 
-            } else {
+            } else { // como o grafo foi lido uma vez, eh necessario limpar a estrutura para o novo grafo.
                 free(grafo_matriz_node);
                 grafo_matriz_node = (struct matriz*)malloc(sizeof(struct matriz));
 
@@ -447,7 +447,7 @@ void criar_grafo(int op){
                         printf("\nO vertice tem  que peso ?[1 para sim e 0 para nao]\n>: ");
                         scanf("%d",&__tem_peso__);
 
-                        if(__tem_peso__ == 1){
+                        if(__tem_peso__ == 1){ // Seo vertice nao tem peso, o valor padrao sera 0, para representar q nao tem peso.
                             printf("\nQual o peso do vertice [%d] ?\n>: ",i);
                             scanf("%d",&__peso__);
                             fprintf(f2, "%d %d %d\n",i,j,__peso__);
@@ -538,7 +538,7 @@ void atualiza_vertices(struct matriz *grafo_matriz_node){
         int i = 0;
         int j = 0;
         int resp = 0;
-
+        // passando pela matriz de adjacencia adicionando 1, para indicar q existe uma aresta.
         for(i = 0; i < grafo_matriz_node->tamanho; i++) {
             for(j = 0; j < grafo_matriz_node->tamanho; j++) {
                 printf("Vertice %d -> %d\n> 1 para sim 0 para nao <\n>: ",i,j);
@@ -1125,16 +1125,18 @@ int grafos(int option,int __local_option__, struct info__matriz *grafo_node,stru
 
                 realizar_uma_busca_dfs(aux2_matriz, dfs_tabela);
 
-            } else if(__local_while_op__ == 4) {
+            } else if(__local_while_op__ == 4) { // Mostrando a tabela DFS.
                 strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Mostrar a tabela - Algoritmo busca por profundidade.\n");
                 fflush(stdin);
 
                 clrscr();
-                if(__is_dfs_created__ == true) {
+                if(__is_dfs_created__ == true) { // caso elas esteja craida mostre ela.
                     print_tabela_dfs(dfs_tabela);
                     __is_dfs_created__ = false;
                 } else {
                     printf("\nE necessario ler uma tabela de um arquivo txt ou criar uma tabela a partir de uma\n matriz de adjacencia para dar print nela.\n\n");
+                    pause();
+                    clrscr();
                 }
 
             }
@@ -1194,16 +1196,18 @@ int grafos(int option,int __local_option__, struct info__matriz *grafo_node,stru
 
                 realizar_uma_busca_bfs(aux2_matriz, bfs_tabela);
 
-            } else if(__local_while_op__ == 4) {
+            } else if(__local_while_op__ == 4) { // Mostrando a tabela BFS 
                 strcat(__function_flow__,"    |--> grafos(op,__local_while_op__, grafo_node, grafo_matriz_node) - Mostrar a tabela - Algoritmo busca por largura.\n");
                 fflush(stdin);
 
                 clrscr();
-                if(__is_bfs_created__ == true) {
+                if(__is_bfs_created__ == true) { // caso ela esteja criada, mostre ela.
                     print_tabela_bfs(bfs_tabela);
                     __is_bfs_created__ = false;
                 } else {
                     printf("\nE necessario ler uma tabela de um arquivo txt ou criar uma tabela a partir de uma\n matriz de adjacencia para dar print nela.\n\n");
+                    pause();
+                    clrscr();
                 }
 
             }
@@ -1266,7 +1270,7 @@ int __Menu__(){
     struct tm *tm = localtime(&t);              // Pegando o tempo local.
     assert(strftime(s, sizeof(s), "%c", tm));   // Concatenando o tempo com a data atual.
     strcat(log_name,s);                         // Concatenando o nome do arquivo com o tempo e data atual da
-    // string anterior.
+                                                //string anterior.
 
     //Declarando as duas estruturas que realizaram e armazenaram os dados com as operacoes relacionadas a grafos.
     struct matriz *grafo_matriz_node = (struct matriz*)malloc(sizeof(struct matriz));               // Alocando memoria para as matrizes de adjacencia e de peso.
@@ -1285,7 +1289,7 @@ int __Menu__(){
     strcat(__function_flow__,"\n     **START LOG**     \n");
     strcat(__function_flow__,"\n-->__Menu__()\n");
 
-    do{
+    do{ // loop principal
         clrscr();
         printf("Function atual: __Menu__();\n");
         printf("\n     **Trabalho pratico de Estrutura de dados 2**\n\n");
@@ -1299,7 +1303,7 @@ int __Menu__(){
 
         printf("  **Digite sua escolha\n>: ");
         scanf("%d",&op);
-
+        // Entrando nos loops secundarios.
         if(op == 1){
             do{
                 clrscr();
@@ -1444,7 +1448,7 @@ int __Menu__(){
         }
 
     }while(op != 0);
-
+    // Registrando o fim do log apos sair do loop principal.
     strcat(__function_flow__,"\n\n     **END LOG**     \n");
     __registrar_log__(__function_flow__, log_name);
 

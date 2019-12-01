@@ -30,7 +30,7 @@ void visit_dfs(struct auxiliar_matriz *aux2_matriz, int origem, dfs_struct *dfs_
     dfs_caminho[contador_caminho] = origem;
     dfs_tabela->caminho[contador_caminho] = origem;
 
-
+    // percorre os certices que a origem atige, se o valor de m[origem][v] == 1, e for branco, entra na function
     int v = 0;
     for(v = 0; v < aux2_matriz->tamanho; v++){
         if(aux2_matriz->m[origem][v] == 1 && dfs_tabela->indice_cor[v] == 'b'){
@@ -43,6 +43,7 @@ void visit_dfs(struct auxiliar_matriz *aux2_matriz, int origem, dfs_struct *dfs_
         }
     }
 
+    // Essa parte do código é atingida na recursão 
     dfs_tabela->indice_cor[origem] = 'p';
     dfs_tabela->tempo = dfs_tabela->tempo + 1;
     dfs_tabela->finalizacao[origem] = dfs_tabela->tempo;
@@ -63,11 +64,12 @@ void dfs(struct auxiliar_matriz *aux2_matriz,int origem, dfs_struct *dfs_tabela,
 
     dfs_tabela->tempo = 0;
     printf("Function atual: dfs(ma *aux_matriz);\n");
-
+    // Inicializacao da cor no vetor de cor dos vertices.
     for(i = 0; i < dfs_tabela->tamanho; i++) {
         dfs_tabela->indice_cor[i] = 'b';
     }
 
+    // Percorrendo a function, enquanto o vetor de cor estiver com "branco" na posicao j
     for(j = 0; j < dfs_tabela->tamanho; j++){
         if(dfs_tabela->indice_cor[j] == 'b'){
             visit_dfs(aux2_matriz, origem, dfs_tabela, debug);
@@ -97,6 +99,7 @@ void dfs(struct auxiliar_matriz *aux2_matriz,int origem, dfs_struct *dfs_tabela,
 // FIM DO ALGORITMO DFS
 
 // INICIO DO ALGORITMO BFS
+// Insere a vertice na fila
 void inserir_fila(int vertex) {
     if(anterior == MAX-1)
         printf("Underflow na fila!!!!!\n");
@@ -108,6 +111,7 @@ void inserir_fila(int vertex) {
     }
 }
 
+// Verifica se a fila esta vazia.
 int fila_esta_vazia() {
     if(proximo == -1 || proximo > anterior)
         return 1;
@@ -115,6 +119,8 @@ int fila_esta_vazia() {
         return 0;
 }
 
+// "Deleta" um vertice da fila, o vetor passa para proxima
+//posicao e retorna o valor da posicao anterior.
 int deletar_fila() {
     int deletar_item;
     if(proximo == -1 || proximo > anterior) {
@@ -126,6 +132,7 @@ int deletar_fila() {
     return deletar_item;
 }
 
+// Function responsavel por realizar as operacoes de busca no "grafo" representado por matriz de adjacencia.
 void BFS(int v, struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela, bool debug) {
     int i;
     int contador = 0;
@@ -138,15 +145,15 @@ void BFS(int v, struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela
     //state[v] = 'c';
 
     while(!fila_esta_vazia()) {
-        v = deletar_fila();
+        v = deletar_fila(); // troca o vertice v por um outro na fila
         //printf("%d ",v);
 
         bfs_tabela->indice_cor[v] = 'p';
         //state[v] = 'p';
-        bfs_tabela->caminho[contador] = v;
+        bfs_tabela->caminho[contador] = v; // adiciona v ao vetor de caminho
         contador++;
         //contador++;
-
+        // Percorrendo todos os vertices que v faz ligacao
         for(i=0; i< aux2_matriz->tamanho; i++) {
             if(aux2_matriz->m[v][i] == 1 && bfs_tabela->indice_cor[i] == 'b')  {
                 //distancia++;
@@ -175,6 +182,7 @@ void BFS(int v, struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela
 
 }
 
+// Chama a function BFS para realizar a busca.
 void BF_Traversal(struct auxiliar_matriz *aux2_matriz, struct BFS_data *bfs_tabela, bool debug) {
     int i;
 

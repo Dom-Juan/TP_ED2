@@ -4,7 +4,7 @@
 #include "headers/grafos.h"
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
-
+// Main contendo macros para system pause para visualizar a info antes de ir pro loop principal.
 int main() {
     printf("          ** Trabalho de Estrutura de Dados II **          \n");
     printf("Desenvolvido por:\n");

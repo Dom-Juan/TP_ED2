@@ -3,7 +3,7 @@
 //
 
 #include "headers/mini_controller.h"
-
+// Substitui caracteres por outros.
 char *replaceWord(const char *s, const char *oldW, const char *newW) {
     char *result;
     int i, cnt = 0;
@@ -38,7 +38,7 @@ char *replaceWord(const char *s, const char *oldW, const char *newW) {
     result[i] = '\0';
     return result;
 }
-
+// Criar o arquivo de log com o fluxo das functions
 void __registrar_log__(char __function_flow__[50],char log_name[50]){
     FILE *f3; // variavel para o arquivo de text que contera o log
 
